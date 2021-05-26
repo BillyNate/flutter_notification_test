@@ -1,0 +1,24 @@
+os: osx
+name: iOS
+osx_image: xcode12.5
+install:
+  - git clone https://github.com/flutter/flutter.git -b stable
+  - export PATH=$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin/:$PATH
+  - flutter doctor
+script:
+  - flutter build ios --build-number $TRAVIS_BUILD_NUMBER --debug --no-codesign
+before_deploy:
+  - pushd build/ios/iphoneos
+  - mkdir Payload 
+  - cd Payload 
+  - ln -s ../Runner.app 
+  - cd .. 
+  - zip -r app.ipa Payload 
+  - popd
+deploy:
+  provider: releases
+  api_key: '$GITHUB_API_KEY'
+  file: build/ios/iphoneos/app.ipa
+  draft: true
+  skip_cleanup: true
+  
