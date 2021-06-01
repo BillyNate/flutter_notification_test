@@ -5,8 +5,12 @@ install:
   - git clone https://github.com/flutter/flutter.git -b stable
   - export PATH=$PWD/flutter/bin:$PWD/flutter/bin/cache/dart-sdk/bin/:$PATH
   - flutter doctor
+  - gem install fastlane
 script:
   - flutter build ios --build-number $TRAVIS_BUILD_NUMBER --debug --no-codesign
+  - pushd ios
+  - fastlane run build_and_upload_to_appetize api_token:"$APPETIZE_API_TOKEN" scheme:"Runner" public_key:"9ynr65v6p7xkyj997u17an5gp4"
+  - popd
 before_deploy:
   - pushd build/ios/iphoneos
   - mkdir Payload 
